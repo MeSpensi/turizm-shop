@@ -1,17 +1,44 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Box, Rating, IconButton, Chip, InputBase } from '@mui/material';
-import { ShoppingCart, Favorite, FavoriteBorder, NavigateNext, NavigateBefore, LocalShipping, Security, Support, Terrain, AcUnit, WbSunny, DirectionsBike, Hiking, Park } from '@mui/icons-material';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Button,
+  Box,
+  Rating,
+  InputBase
+} from '@mui/material';
+
+import {
+  ShoppingCart,
+  NavigateNext,
+  LocalShipping,
+  Security,
+  Support,
+  Terrain,
+  AcUnit,
+  WbSunny,
+  Hiking,
+  Park
+} from '@mui/icons-material';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
 import { productService } from '../services/api';
 import { useCart } from '../contexts/CartContext';
 import '../style.css';
 
-// Custom styles for Swiper
 const swiperStyles = {
   '& .swiper-button-next, & .swiper-button-prev': {
     color: 'white',
@@ -47,16 +74,13 @@ const swiperStyles = {
     gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '16px',
   },
-
 };
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
 
-  // Slider images for tourism equipment
   const sliderImages = [
     {
       url: 'https://images.unsplash.com/photo-1501554728187-ce583db33af7?auto=format&fit=crop&w=1200&q=90',
@@ -75,7 +99,6 @@ const HomePage = () => {
     }
   ];
 
-  // Features section
   const features = [
     {
       icon: <LocalShipping sx={{ fontSize: 40, color: '#2196F3' }} />,
@@ -97,7 +120,6 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const [categoriesResponse, productsResponse] = await Promise.all([
           productService.getCategories(),
           productService.getProducts({ in_stock: true })
@@ -105,13 +127,10 @@ const HomePage = () => {
 
         setCategories(categoriesResponse.data.results || categoriesResponse.data);
 
-        // Get 4 featured products
         const products = productsResponse.data.results || productsResponse.data;
         setFeaturedProducts(products.slice(0, 4));
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -221,7 +240,7 @@ const HomePage = () => {
 
       {/* Features Section */}
       <Box sx={{ mb: 8 }}>
-        <div className='category-cards'>
+        <div className="category-cards">
           {features.map((feature, index) => (
             <Grid item xs={12} md={4} key={index}>
               <Card
@@ -266,37 +285,27 @@ const HomePage = () => {
         Категории снаряжения
       </Typography>
 
-      <div className='category-cards'>
+      <div className="category-cards">
         {categories.map((category) => (
-          <div className='category-card'>
+          <div className="category-card" key={category.id}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardMedia
                 component="img"
                 height="200"
                 image={category.image || 'https://source.unsplash.com/random?camping'}
                 alt={category.name}
-                sx={{
-                  objectFit: 'cover',
-                }}
+                sx={{ objectFit: 'cover' }}
               />
               <CardContent sx={{ flexGrow: 1, p: 3 }}>
                 <Typography
                   gutterBottom
                   variant="h5"
                   component="h2"
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.primary',
-                  }}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
                 >
                   {category.name}
                 </Typography>
-                <Typography
-                  sx={{
-                    color: 'text.secondary',
-                    mb: 2,
-                  }}
-                >
+                <Typography sx={{ color: 'text.secondary', mb: 2 }}>
                   {category.description || 'Откройте для себя снаряжение в этой категории'}
                 </Typography>
               </CardContent>
@@ -333,7 +342,7 @@ const HomePage = () => {
         Популярное снаряжение
       </Typography>
 
-      <div className='category-cards'>
+      <div className="category-cards">
         {featuredProducts.map((product) => (
           <Grid item key={product.id} xs={12} sm={6} md={4}>
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -342,27 +351,18 @@ const HomePage = () => {
                 height="200"
                 image={product.image || 'https://source.unsplash.com/random?camping-gear'}
                 alt={product.name}
-                sx={{
-                  objectFit: 'cover',
-                }}
+                sx={{ objectFit: 'cover' }}
               />
               <CardContent sx={{ flexGrow: 1, p: 3 }}>
                 <Typography
                   gutterBottom
                   variant="h6"
                   component="h3"
-                  sx={{
-                    fontWeight: 600,
-                    color: 'text.primary',
-                  }}
+                  sx={{ fontWeight: 600, color: 'text.primary' }}
                 >
                   {product.name}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mb: 2 }}
-                >
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                   {product.description}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -371,11 +371,7 @@ const HomePage = () => {
                     ({product.reviews_count || 12})
                   </Typography>
                 </Box>
-                <Typography
-                  variant="h6"
-                  color="primary"
-                  sx={{ fontWeight: 600 }}
-                >
+                <Typography variant="h6" color="primary" sx={{ fontWeight: 600 }}>
                   {product.price} ₽
                 </Typography>
               </CardContent>
@@ -415,7 +411,7 @@ const HomePage = () => {
             Интересные факты о туризме
           </Typography>
 
-          <div className='category-cards'>
+          <div className="category-cards">
             <Grid item xs={12} md={4}>
               <Card sx={{ height: '100%', p: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -477,18 +473,20 @@ const HomePage = () => {
           Виды туризма
         </Typography>
 
-        <div className='category-cards'>
+        <div className="category-cards">
           <Grid item xs={12} md={4}>
-            <Card sx={{
-              height: '100%',
-              display: 'flex',
-              p: 3,
-              '&:hover': {
-                boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
-                transform: 'translateY(-4px)',
-                transition: 'all 0.3s ease'
-              }
-            }}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                p: 3,
+                '&:hover': {
+                  boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
+                  transform: 'translateY(-4px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
               <Box sx={{ mr: 3 }}>
                 <Park sx={{ fontSize: 48, color: '#2196F3' }} />
               </Box>
@@ -499,28 +497,26 @@ const HomePage = () => {
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
                   Отдых на природе с палаткой, костром и звездным небом над головой.
                 </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  endIcon={<NavigateNext />}
-                >
+                <Button variant="outlined" color="primary" endIcon={<NavigateNext />}>
                   Подробнее
                 </Button>
               </Box>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
 
-            <Card sx={{
-              height: '100%',
-              display: 'flex',
-              p: 3,
-              '&:hover': {
-                boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
-                transform: 'translateY(-4px)',
-                transition: 'all 0.3s ease'
-              }
-            }}>
+          <Grid item xs={12} md={4}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                p: 3,
+                '&:hover': {
+                  boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
+                  transform: 'translateY(-4px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
               <Box sx={{ mr: 3 }}>
                 <Hiking sx={{ fontSize: 48, color: '#2196F3' }} />
               </Box>
@@ -531,11 +527,7 @@ const HomePage = () => {
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
                   Исследуйте природу пешком, наслаждаясь живописными пейзажами и чистым воздухом.
                 </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  endIcon={<NavigateNext />}
-                >
+                <Button variant="outlined" color="primary" endIcon={<NavigateNext />}>
                   Подробнее
                 </Button>
               </Box>
@@ -543,16 +535,18 @@ const HomePage = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{
-              height: '100%',
-              display: 'flex',
-              p: 3,
-              '&:hover': {
-                boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
-                transform: 'translateY(-4px)',
-                transition: 'all 0.3s ease'
-              }
-            }}>
+            <Card
+              sx={{
+                height: '100%',
+                display: 'flex',
+                p: 3,
+                '&:hover': {
+                  boxShadow: '0px 8px 24px rgba(33, 150, 243, 0.15)',
+                  transform: 'translateY(-4px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
               <Box sx={{ mr: 3 }}>
                 <Park sx={{ fontSize: 48, color: '#2196F3' }} />
               </Box>
@@ -563,57 +557,41 @@ const HomePage = () => {
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
                   Отдых на природе с палаткой, костром и звездным небом над головой.
                 </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  endIcon={<NavigateNext />}
-                >
+                <Button variant="outlined" color="primary" endIcon={<NavigateNext />}>
                   Подробнее
                 </Button>
               </Box>
             </Card>
           </Grid>
-
         </div>
       </Box>
 
       {/* Newsletter Section */}
-      <Box sx={{
-        mb: 8,
-        backgroundColor: '#2196F3',
-        py: 6,
-        borderRadius: 4,
-        color: 'white'
-      }}>
+      <Box
+        sx={{
+          mb: 8,
+          backgroundColor: '#2196F3',
+          py: 6,
+          borderRadius: 4,
+          color: 'white'
+        }}
+      >
         <Container maxWidth="md">
           <Typography
             variant="h4"
             component="h2"
             gutterBottom
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              textAlign: 'center'
-            }}
+            sx={{ fontWeight: 700, mb: 2, textAlign: 'center' }}
           >
             Подпишитесь на новости
           </Typography>
           <Typography
             variant="h6"
-            sx={{
-              mb: 4,
-              textAlign: 'center',
-              opacity: 0.9
-            }}
+            sx={{ mb: 4, textAlign: 'center', opacity: 0.9 }}
           >
             Получайте информацию о новых поступлениях и специальных предложениях
           </Typography>
-          <Box sx={{
-            display: 'flex',
-            gap: 2,
-            maxWidth: 600,
-            mx: 'auto'
-          }}>
+          <Box sx={{ display: 'flex', gap: 2, maxWidth: 600, mx: 'auto' }}>
             <InputBase
               placeholder="Ваш email"
               sx={{
@@ -643,4 +621,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage; 
+export default HomePage;
