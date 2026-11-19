@@ -3,6 +3,11 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 class ProfileSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(
+        required=False,
+        allow_null=True
+    )
+
     class Meta:
         model = Profile
         fields = ['id', 'phone_number', 'profile_picture', 'address']
