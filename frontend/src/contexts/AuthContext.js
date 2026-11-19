@@ -12,13 +12,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        setLoading(true);
         const response = await authService.getProfile();
         setCurrentUser(response.data);
         setError(null);
       } catch (err) {
         console.error('Failed to fetch user profile:', err);
-        setError('Ошибка аутентификации. Пожалуйста, войдите снова.');
         localStorage.removeItem('token');
         setCurrentUser(null);
       } finally {
@@ -26,9 +24,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    const token = localStorage.getItem('token');
-
-    if (token) {
+    if (localStorage.getItem('token')) {
       fetchUserProfile();
     } else {
       setLoading(false);
@@ -38,14 +34,23 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true);
+
       const response = await authService.login(credentials);
-      setCurrentUser(response.data);
-      localStorage.setItem('token', response.data.token || 'dummy-token');
+      const { token, user } = response.data;
+
+      if (!token) {
+        throw new Error('Сервер не вернул токен авторизации.');
+      }
+
+      localStorage.setItem('token', token);
+      setCurrentUser(user);
       setError(null);
+
       return response.data;
     } catch (err) {
       setError(
         err.response?.data?.detail ||
+        err.message ||
         'Ошибка входа. Проверьте учетные данные.'
       );
       throw err;
@@ -57,11 +62,23 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
+
       const response = await authService.register(userData);
+      const { token, user } = response.data;
+
+      if (!token) {
+        throw new Error('Сервер не вернул токен авторизации.');
+      }
+
+      localStorage.setItem('token', token);
+      setCurrentUser(user);
+      setError(null);
+
       return response.data;
     } catch (err) {
       setError(
         err.response?.data?.detail ||
+        err.message ||
         'Ошибка регистрации. Попробуйте другие данные.'
       );
       throw err;
@@ -73,8 +90,13 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       setLoading(true);
+
       const response = await authService.updateProfile(profileData);
-      setCurrentUser({ ...currentUser, profile: response.data });
+      setCurrentUser({
+        ...currentUser,
+        profile: response.data
+      });
+
       return response.data;
     } catch (err) {
       setError(
